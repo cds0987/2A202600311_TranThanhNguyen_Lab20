@@ -9,7 +9,7 @@ jobs:
     env:
       MYPY_CACHE_DIR: /tmp/mypy-cache
       PYTEST_ADDOPTS: --cache-dir=/tmp/pytest-cache
-      RUFF_NO_CACHE: "1"
+      RUFF_NO_CACHE: "true"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
