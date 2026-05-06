@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
+ArticleRecord = dict[str, str]
 
 GOOGLE_NEWS_RSS = "https://news.google.com/rss/search"
 REQUEST_HEADERS = {
@@ -15,11 +16,11 @@ REQUEST_HEADERS = {
 }
 
 
-def clean_text(value: str) -> str:
+def clean_text(value: str | None) -> str:
     return " ".join((value or "").split())
 
 
-def fetch_feed(query: str) -> list[dict]:
+def fetch_feed(query: str) -> list[ArticleRecord]:
     params = {
         "q": query,
         "hl": "en-US",
@@ -32,7 +33,7 @@ def fetch_feed(query: str) -> list[dict]:
         xml_data = response.read()
 
     root = ET.fromstring(xml_data)
-    records: list[dict] = []
+    records: list[ArticleRecord] = []
     for item in root.findall("./channel/item"):
         title = clean_text(item.findtext("title", default=""))
         link = clean_text(item.findtext("link", default=""))
@@ -61,7 +62,7 @@ def fetch_feed(query: str) -> list[dict]:
     return records
 
 
-def fetch_articles(limit: int = 100) -> list[dict]:
+def fetch_articles(limit: int = 100) -> list[ArticleRecord]:
     queries = [
         "artificial intelligence",
         "machine learning",
@@ -71,7 +72,7 @@ def fetch_articles(limit: int = 100) -> list[dict]:
         "AI startup OR AI research OR AI model",
     ]
 
-    results: list[dict] = []
+    results: list[ArticleRecord] = []
     seen_urls: set[str] = set()
 
     while len(results) < limit:
@@ -94,7 +95,7 @@ def fetch_articles(limit: int = 100) -> list[dict]:
     return results[:limit]
 
 
-def write_outputs(articles: list[dict], output_dir: Path) -> None:
+def write_outputs(articles: list[ArticleRecord], output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     json_path = output_dir / "ai_articles.json"

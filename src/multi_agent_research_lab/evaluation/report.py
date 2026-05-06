@@ -1,7 +1,7 @@
 """Benchmark report rendering."""
 
-from multi_agent_research_lab.core.state import ResearchState
 from multi_agent_research_lab.core.schemas import BenchmarkMetrics
+from multi_agent_research_lab.core.state import ResearchState
 
 
 def render_markdown_report(metrics: list[BenchmarkMetrics]) -> str:
@@ -14,14 +14,19 @@ def render_markdown_report(metrics: list[BenchmarkMetrics]) -> str:
     for item in metrics:
         cost = "" if item.estimated_cost_usd is None else f"{item.estimated_cost_usd:.4f}"
         quality = "" if item.quality_score is None else f"{item.quality_score:.1f}"
-        citation_coverage = "" if item.citation_coverage is None else f"{item.citation_coverage:.0%}"
+        citation_coverage = (
+            "" if item.citation_coverage is None else f"{item.citation_coverage:.0%}"
+        )
         failure_rate = "" if item.failure_rate is None else f"{item.failure_rate:.0%}"
         lines.append(
             f"| {item.run_name} | {item.latency_seconds:.2f} | {cost} | {quality} | "
             f"{citation_coverage} | {failure_rate} | {item.notes} |"
         )
         if item.quality_breakdown:
-            breakdown = ", ".join(f"{name}={score:.2f}" for name, score in item.quality_breakdown.items())
+            breakdown = ", ".join(
+                f"{name}={score:.2f}"
+                for name, score in item.quality_breakdown.items()
+            )
             lines.append(f"| `{item.run_name}` rubric proxy |  |  |  |  |  | {breakdown} |")
     return "\n".join(lines) + "\n"
 
@@ -34,7 +39,11 @@ def render_benchmark_summary(
 ) -> str:
     """Render the richer benchmark artifact expected by the lab."""
 
-    route = " -> ".join(multi_agent_state.route_history) if multi_agent_state.route_history else "none"
+    route = (
+        " -> ".join(multi_agent_state.route_history)
+        if multi_agent_state.route_history
+        else "none"
+    )
     retrieval_modes = sorted(
         {
             source.metadata.get("retrieval", "unknown")
@@ -75,8 +84,11 @@ def render_benchmark_summary(
             "",
             "## Exit ticket",
             "",
-            "1. Use multi-agent when the task benefits from separate retrieval, analysis, writing, and review steps with observable handoffs.",
-            "2. Avoid multi-agent for short or latency-sensitive tasks where orchestration overhead outweighs quality gains.",
+            "1. Use multi-agent when the task benefits from separate "
+            "retrieval, analysis, writing, and review steps with observable "
+            "handoffs.",
+            "2. Avoid multi-agent for short or latency-sensitive tasks "
+            "where orchestration overhead outweighs quality gains.",
             "",
         ]
     )
@@ -136,12 +148,14 @@ def _render_failure_mode(metrics: BenchmarkMetrics, state: ResearchState) -> str
     if len(state.sources) < 2:
         return (
             "The main failure mode is still narrow retrieval breadth. "
-            "The next fix is to add a research-oriented retrieval backend or domain-specific source adapters."
+            "The next fix is to add a research-oriented retrieval backend "
+            "or domain-specific source adapters."
         )
     if (metrics.citation_coverage or 0.0) < 0.5:
         return (
             "The main failure mode is weak inline citation use. "
-            "The next fix is to tighten writer prompting so each major claim maps to one numbered source."
+            "The next fix is to tighten writer prompting so each major "
+            "claim maps to one numbered source."
         )
     if state.errors:
         return (

@@ -38,7 +38,7 @@ def baseline(
 
     _init()
     state = run_baseline_query(query)
-    console.print(Panel.fit(state.final_answer, title="Single-Agent Baseline"))
+    console.print(Panel.fit(state.final_answer or "", title="Single-Agent Baseline"))
 
 
 @app.command("multi-agent")
@@ -62,7 +62,10 @@ def benchmark(
             help="Research query used for baseline and multi-agent benchmarking",
         ),
     ] = "Research GraphRAG state-of-the-art and write a 500-word summary for technical learners.",
-    output_dir: Annotated[Path, typer.Option("--output-dir", help="Directory for generated artifacts")] = Path("reports"),
+    output_dir: Annotated[
+        Path,
+        typer.Option("--output-dir", help="Directory for generated artifacts"),
+    ] = Path("reports"),
 ) -> None:
     """Run the benchmark and write the required report artifacts."""
 
@@ -91,7 +94,12 @@ def benchmark(
             "output": multi_state.total_output_tokens,
             "cost_usd": multi_state.total_cost_usd,
         },
-        "retrieval_modes": sorted({source.metadata.get("retrieval", "unknown") for source in multi_state.sources}),
+        "retrieval_modes": sorted(
+            {
+                source.metadata.get("retrieval", "unknown")
+                for source in multi_state.sources
+            }
+        ),
     }
     store.write_json("benchmark_results.json", benchmark_payload)
     store.write_text(
@@ -115,8 +123,9 @@ def run_baseline_query(query: str) -> ResearchState:
     llm_client = LLMClient()
     response = llm_client.complete(
         system_prompt=(
-            "You are a single-agent research assistant. Answer the user's query directly and clearly "
-            "for technical learners. Use numbered inline citations like [1] when source material is provided."
+            "You are a single-agent research assistant. Answer the user's "
+            "query directly and clearly for technical learners. Use numbered "
+            "inline citations like [1] when source material is provided."
         ),
         user_prompt=f"Query: {query}\nAudience: {request.audience}",
     )

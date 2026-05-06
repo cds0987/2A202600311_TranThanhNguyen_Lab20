@@ -18,13 +18,16 @@ class WriterAgent(BaseAgent):
         """Populate `state.final_answer`."""
 
         citations = "\n".join(
-            f"- [{idx}] {source.title} ({source.url or 'no-url'})" for idx, source in enumerate(state.sources, start=1)
+            f"- [{idx}] {source.title} ({source.url or 'no-url'})"
+            for idx, source in enumerate(state.sources, start=1)
         )
         response = self.llm_client.complete(
             system_prompt=(
-                "You are a writing agent. Produce a clear, helpful answer for the target audience. "
-                "Ground the answer in the provided sources, cite claims inline with bracketed citations "
-                "such as [1] or [2], and end with a short Sources section that preserves the same numbering."
+                "You are a writing agent. Produce a clear, helpful answer "
+                "for the target audience. Ground the answer in the provided "
+                "sources, cite claims inline with bracketed citations such "
+                "as [1] or [2], and end with a short Sources section that "
+                "preserves the same numbering."
             ),
             user_prompt=(
                 f"User query: {state.request.query}\n"

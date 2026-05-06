@@ -4,12 +4,17 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from multi_agent_research_lab.agents import AnalystAgent, CriticAgent, ResearcherAgent, SupervisorAgent, WriterAgent
+from multi_agent_research_lab.agents import (
+    AnalystAgent,
+    CriticAgent,
+    ResearcherAgent,
+    SupervisorAgent,
+    WriterAgent,
+)
 from multi_agent_research_lab.core.config import get_settings
 from multi_agent_research_lab.core.errors import AgentExecutionError
 from multi_agent_research_lab.core.state import ResearchState
 from multi_agent_research_lab.observability.tracing import trace_span
-
 
 AgentRunner = Callable[[ResearchState], ResearchState]
 
@@ -70,7 +75,10 @@ class MultiAgentWorkflow:
                 if route == "writer" and state.final_answer:
                     break
                 if len(state.errors) >= 3:
-                    raise AgentExecutionError(f"Workflow failed after repeated agent errors: {state.errors}") from exc
+                    raise AgentExecutionError(
+                        "Workflow failed after repeated agent errors: "
+                        f"{state.errors}"
+                    ) from exc
 
         if not state.final_answer:
             raise AgentExecutionError("Workflow finished without producing a final answer.")

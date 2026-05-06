@@ -12,7 +12,10 @@ def test_benchmark_scores_citation_coverage_and_breakdown() -> None:
         ],
         research_notes="notes",
         analysis_notes="analysis",
-        final_answer="A grounded answer with evidence [1] and [2].\n\n### Sources\n- [1] Source A\n- [2] Source B",
+        final_answer=(
+            "A grounded answer with evidence [1] and [2].\n\n"
+            "### Sources\n- [1] Source A\n- [2] Source B"
+        ),
         critic_notes="critic",
     )
     state.route_history = ["researcher", "analyst", "writer", "critic", "done"]

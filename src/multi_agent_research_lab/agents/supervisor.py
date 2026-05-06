@@ -38,5 +38,8 @@ class SupervisorAgent(BaseAgent):
                 metadata={"iteration": state.iteration},
             )
         )
-        state.add_trace_event("supervisor.route", {"next": next_route, "iteration": state.iteration})
+        state.add_trace_event(
+            "supervisor.route",
+            {"next": next_route, "iteration": state.iteration},
+        )
         return state

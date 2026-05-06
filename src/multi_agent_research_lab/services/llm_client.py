@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
 from typing import Any
 
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -43,7 +43,11 @@ class LLMClient:
             return None
         return OpenAI(api_key=self.settings.openai_api_key, timeout=self.settings.timeout_seconds)
 
-    @retry(wait=wait_exponential(multiplier=1, min=1, max=8), stop=stop_after_attempt(3), reraise=True)
+    @retry(
+        wait=wait_exponential(multiplier=1, min=1, max=8),
+        stop=stop_after_attempt(3),
+        reraise=True,
+    )
     def complete(self, system_prompt: str, user_prompt: str) -> LLMResponse:
         """Return a model completion."""
 
@@ -57,7 +61,11 @@ class LLMClient:
                 input=user_prompt,
             )
         except Exception as exc:
-            logger.warning("OpenAI request failed; falling back to deterministic local output: %s", exc)
+            logger.warning(
+                "OpenAI request failed; falling back to deterministic local "
+                "output: %s",
+                exc,
+            )
             return self._mock_complete(system_prompt=system_prompt, user_prompt=user_prompt)
         usage = getattr(response, "usage", None)
         input_tokens = getattr(usage, "input_tokens", None)
@@ -82,8 +90,10 @@ class LLMClient:
 
         if "single-agent research assistant" in system_text:
             content = (
-                "This offline fallback summary explains the topic at a high level, but it does not claim "
-                "live retrieval or fresh benchmarking data. It should be treated as a local demo answer."
+                "This offline fallback summary explains the topic at a high "
+                "level, but it does not claim live retrieval or fresh "
+                "benchmarking data. It should be treated as a local demo "
+                "answer."
             )
         elif "research agent" in system_text:
             content = (
@@ -105,10 +115,13 @@ class LLMClient:
         elif "writing agent" in system_text:
             source_lines = citations or ["[1] Local fallback source"]
             content = (
-                "GraphRAG-style research workflows benefit from separating retrieval, analysis, and writing so "
-                "each step can be inspected and improved [1]. In this offline fallback run, the system uses "
-                "seed sources rather than live web results, which keeps the workflow testable but limits claim "
-                "freshness [1]. A production-ready version should combine broader retrieval with stricter claim-to-source "
+                "GraphRAG-style research workflows benefit from separating "
+                "retrieval, analysis, and writing so each step can be "
+                "inspected and improved [1]. In this offline fallback run, "
+                "the system uses seed sources rather than live web results, "
+                "which keeps the workflow testable but limits claim freshness "
+                "[1]. A production-ready version should combine broader "
+                "retrieval with stricter claim-to-source "
                 "mapping and richer benchmarking [2].\n\n"
                 "### Sources\n"
                 + "\n".join(f"- {line}" for line in source_lines[:3])

@@ -1,19 +1,19 @@
 .PHONY: install test lint format typecheck run-baseline run-multi clean
 
 install:
-	pip install -e ".[dev,llm]"
+	python -m pip install -e ".[dev,llm]"
 
 test:
-	pytest
+	python -m pytest
 
 lint:
-	ruff check src tests
+	python -m ruff check src tests
 
 format:
-	ruff format src tests
+	python -m ruff format src tests
 
 typecheck:
-	mypy src
+	python -m mypy --cache-dir "$${MYPY_CACHE_DIR:-.mypy_cache}" src
 
 run-baseline:
 	python -m multi_agent_research_lab.cli baseline --query "Research GraphRAG state-of-the-art"

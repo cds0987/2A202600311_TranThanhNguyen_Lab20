@@ -20,7 +20,8 @@ class AnalystAgent(BaseAgent):
         source_titles = ", ".join(source.title for source in state.sources) or "no sources"
         response = self.llm_client.complete(
             system_prompt=(
-                "You are an analyst agent. Convert research notes into structured insights with sections "
+                "You are an analyst agent. Convert research notes into "
+                "structured insights with sections "
                 "for key claims, supporting evidence, disagreements, and gaps."
             ),
             user_prompt=(
@@ -33,7 +34,11 @@ class AnalystAgent(BaseAgent):
         state.analysis_notes = response.content
         state.record_usage(response.input_tokens, response.output_tokens, response.cost_usd)
         state.agent_results.append(
-            AgentResult(agent=AgentName.ANALYST, content=response.content, metadata={"source_count": len(state.sources)})
+            AgentResult(
+                agent=AgentName.ANALYST,
+                content=response.content,
+                metadata={"source_count": len(state.sources)},
+            )
         )
         state.add_trace_event("analyst.completed", {"used_model": self.llm_client.model})
         return state

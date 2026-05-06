@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
 
 from multi_agent_research_lab.core.schemas import SourceDocument
 from multi_agent_research_lab.services.fetch_ai_articles import fetch_feed
@@ -23,7 +23,10 @@ _SEED_SOURCES: tuple[_SeedSource, ...] = (
     _SeedSource(
         title="Microsoft GraphRAG repository",
         url="https://github.com/microsoft/graphrag",
-        snippet="Reference implementation and documentation for graph-based retrieval-augmented generation workflows.",
+        snippet=(
+            "Reference implementation and documentation for graph-based "
+            "retrieval-augmented generation workflows."
+        ),
         tags=("graphrag", "graph", "retrieval", "rag", "microsoft"),
     ),
     _SeedSource(
@@ -35,25 +38,37 @@ _SEED_SOURCES: tuple[_SeedSource, ...] = (
     _SeedSource(
         title="OpenAI docs: Orchestration and handoffs",
         url="https://platform.openai.com/docs/guides/agents/orchestration",
-        snippet="Agentic systems benefit from clear role boundaries, shared state, and controlled handoffs.",
+        snippet=(
+            "Agentic systems benefit from clear role boundaries, shared "
+            "state, and controlled handoffs."
+        ),
         tags=("openai", "orchestration", "handoff", "multi-agent", "supervisor"),
     ),
     _SeedSource(
         title="LangGraph concepts overview",
         url="https://langchain-ai.github.io/langgraph/concepts/",
-        snippet="Graph-based orchestration helps model multi-step workflows with conditional routing.",
+        snippet=(
+            "Graph-based orchestration helps model multi-step workflows "
+            "with conditional routing."
+        ),
         tags=("langgraph", "graph", "workflow", "routing", "state"),
     ),
     _SeedSource(
         title="Anthropic: Building effective agents",
         url="https://www.anthropic.com/engineering/building-effective-agents",
-        snippet="Use multiple agents only when role specialization creates measurable quality or reliability gains.",
+        snippet=(
+            "Use multiple agents only when role specialization creates "
+            "measurable quality or reliability gains."
+        ),
         tags=("agents", "research", "analysis", "quality", "specialization"),
     ),
     _SeedSource(
         title="LangSmith observability quickstart",
         url="https://docs.smith.langchain.com/",
-        snippet="Trace agent workflows, inspect handoffs, and compare runs with consistent observability metadata.",
+        snippet=(
+            "Trace agent workflows, inspect handoffs, and compare runs "
+            "with consistent observability metadata."
+        ),
         tags=("benchmark", "trace", "observability", "evaluation", "langsmith"),
     ),
 )
@@ -68,7 +83,10 @@ class SearchClient:
         combined: list[SourceDocument] = []
         seen_keys: set[str] = set()
         for candidate_query in self._expand_queries(query):
-            for document in self._search_google_news(query=candidate_query, max_results=max_results):
+            for document in self._search_google_news(
+                query=candidate_query,
+                max_results=max_results,
+            ):
                 key = self._document_key(document)
                 if key in seen_keys:
                     continue

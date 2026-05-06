@@ -20,7 +20,8 @@ class CriticAgent(BaseAgent):
         source_titles = "\n".join(f"- {source.title}" for source in state.sources)
         response = self.llm_client.complete(
             system_prompt=(
-                "You are a critic agent. Review the answer for unsupported claims, missing caveats, "
+                "You are a critic agent. Review the answer for unsupported "
+                "claims, missing caveats, "
                 "and citation gaps. Return concise review notes."
             ),
             user_prompt=(
@@ -32,7 +33,11 @@ class CriticAgent(BaseAgent):
         state.critic_notes = response.content
         state.record_usage(response.input_tokens, response.output_tokens, response.cost_usd)
         state.agent_results.append(
-            AgentResult(agent=AgentName.CRITIC, content=response.content, metadata={"reviewed": bool(state.final_answer)})
+            AgentResult(
+                agent=AgentName.CRITIC,
+                content=response.content,
+                metadata={"reviewed": bool(state.final_answer)},
+            )
         )
         state.add_trace_event("critic.completed", {"used_model": self.llm_client.model})
         return state

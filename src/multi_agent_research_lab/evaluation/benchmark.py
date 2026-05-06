@@ -1,17 +1,20 @@
 """Benchmark skeleton for single-agent vs multi-agent."""
 
 import re
+from collections.abc import Callable
 from time import perf_counter
-from typing import Callable
 
 from multi_agent_research_lab.core.schemas import BenchmarkMetrics
 from multi_agent_research_lab.core.state import ResearchState
 
-
 Runner = Callable[[str], ResearchState]
 
 
-def run_benchmark(run_name: str, query: str, runner: Runner) -> tuple[ResearchState, BenchmarkMetrics]:
+def run_benchmark(
+    run_name: str,
+    query: str,
+    runner: Runner,
+) -> tuple[ResearchState, BenchmarkMetrics]:
     """Measure latency and estimate quality, cost, citation coverage, and failure rate."""
 
     started = perf_counter()
@@ -29,7 +32,10 @@ def run_benchmark(run_name: str, query: str, runner: Runner) -> tuple[ResearchSt
         quality_breakdown=quality_breakdown,
         citation_coverage=citation_coverage,
         failure_rate=1.0 if state.errors or not state.final_answer else 0.0,
-        notes=f"iterations={state.iteration}, sources={len(state.sources)}, errors={len(state.errors)}",
+        notes=(
+            f"iterations={state.iteration}, sources={len(state.sources)}, "
+            f"errors={len(state.errors)}"
+        ),
     )
     return state, metrics
 
