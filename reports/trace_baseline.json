@@ -1,0 +1,20 @@
+{
+  "query": "Research GraphRAG state-of-the-art and write a 500-word summary for technical learners.",
+  "audience": "technical learners",
+  "route_history": [],
+  "iteration": 0,
+  "events": [],
+  "errors": [],
+  "usage": {
+    "input_tokens": 76,
+    "output_tokens": 43,
+    "cost_usd": 3.72e-05
+  },
+  "artifacts": {
+    "source_count": 0,
+    "has_research_notes": false,
+    "has_analysis_notes": false,
+    "has_final_answer": true,
+    "has_critic_notes": false
+  }
+}
