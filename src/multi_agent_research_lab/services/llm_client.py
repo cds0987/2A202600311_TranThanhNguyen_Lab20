@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import logging
 from dataclasses import dataclass
 from typing import Any
@@ -11,11 +12,6 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from multi_agent_research_lab.core.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
-
-try:
-    from openai import OpenAI
-except ImportError:  # pragma: no cover - optional dependency during tests
-    OpenAI = None  # type: ignore[assignment,misc]
 
 
 GPT_4O_MINI_INPUT_PRICE_PER_1M = 0.15
@@ -39,9 +35,16 @@ class LLMClient:
         self._client = self._build_client()
 
     def _build_client(self) -> Any | None:
-        if not self.settings.openai_api_key or OpenAI is None:
+        if not self.settings.openai_api_key:
             return None
-        return OpenAI(api_key=self.settings.openai_api_key, timeout=self.settings.timeout_seconds)
+        try:
+            openai_module = importlib.import_module("openai")
+        except ImportError:  # pragma: no cover - optional dependency during tests
+            return None
+        return openai_module.OpenAI(
+            api_key=self.settings.openai_api_key,
+            timeout=self.settings.timeout_seconds,
+        )
 
     @retry(
         wait=wait_exponential(multiplier=1, min=1, max=8),
