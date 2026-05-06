@@ -7,8 +7,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      MYPY_CACHE_DIR: ${{ runner.temp }}/mypy-cache
-      PYTEST_ADDOPTS: --cache-dir=${{ runner.temp }}/pytest-cache
+      MYPY_CACHE_DIR: /tmp/mypy-cache
+      PYTEST_ADDOPTS: --cache-dir=/tmp/pytest-cache
       RUFF_NO_CACHE: "1"
     steps:
       - uses: actions/checkout@v4
